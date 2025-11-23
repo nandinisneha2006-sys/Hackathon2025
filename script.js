@@ -1,28 +1,23 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import OpenAI from "openai";
+function summarize() {
+  const text = document.getElementById("inputText").value;
+  const type = document.getElementById("summaryType").value;
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+  let sentences = text.split(". ");
+  let output = "";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  if (type === "short") {
+    output = sentences.slice(0, 3).join(". ") + ".";
+  }
 
-app.post("/summarize", async (req, res) => {
-  const { text, type } = req.body;
-  let prompt = "";
+  if (type === "bullet") {
+    output = sentences.map(s => "• " + s.trim()).join("\n");
+  }
 
-  if (type === "short") prompt = `Give a short 3–4 line summary of: ${text}`;
-  if (type === "bullet") prompt = `Summarize into bullet points: ${text}`;
-  if (type === "exam") prompt = `Create exam revision notes with key points, definitions, and formulas from: ${text}`;
+  if (type === "exam") {
+    output = "📌 Key Points:\n" +
+             sentences.map(s => "- " + s.trim()).join("\n");
+  }
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: prompt }]
-  });
-
-  res.json({ summary: response.choices[0].message.content });
-});
-
-app.listen(3000, () => console.log("SERVER RUNNING ON PORT 3000"));
+  document.getElementById("outputText").innerText = output;
+  document.getElementById("outputButtons").style.display = "block";
+}
