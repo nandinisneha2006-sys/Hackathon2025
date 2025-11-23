@@ -125,3 +125,9 @@ textarea {
   justify-content: flex-start;
   align-items: flex-start;
 }
+
+#outputButtons button:first-child {
+    margin-bottom: 8px;   /* space between Copy & Download */
+}
+
+
